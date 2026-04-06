@@ -571,9 +571,12 @@ const quizData = [
   }
 ];
 
+const SCRIPT_URL = localStorage.getItem('quiz_script_url') || '';
+
 let currentQ = 0;
 let score = 0;
 let answered = false;
+let userAnswers = [];
 const letters = ["A", "B", "C", "D"];
 
 function showScreen(id) {
@@ -587,6 +590,7 @@ function showScreen(id) {
 function startQuiz() {
   currentQ = 0;
   score = 0;
+  userAnswers = [];
   showScreen('quiz-screen');
   document.getElementById('presenter-controls').style.display = 'flex';
   renderQuestion();
@@ -635,6 +639,15 @@ function selectOption(btn, value) {
   const q = quizData[currentQ];
   const isCorrect = value === q.correct;
   if (isCorrect) score++;
+
+  const chosenOpt = q.options.find(o => o.value === value);
+  const correctOpt = q.options.find(o => o.value === q.correct);
+  userAnswers[currentQ] = {
+    question: q.question,
+    chosen: chosenOpt ? chosenOpt.text : '',
+    correct_answer: correctOpt ? correctOpt.text : '',
+    is_correct: isCorrect
+  };
 
   document.querySelectorAll('.option').forEach(o => {
     o.classList.add('disabled');
@@ -691,11 +704,29 @@ function prevQuestion() {
   }
 }
 
+function submitResults(pct) {
+  if (!SCRIPT_URL) return;
+  const payload = {
+    timestamp: new Date().toISOString(),
+    score: score,
+    total: quizData.length,
+    percentage: pct,
+    answers: userAnswers
+  };
+  fetch(SCRIPT_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload)
+  }).catch(() => {});
+}
+
 function showResults() {
   document.getElementById('presenter-controls').style.display = 'none';
   showScreen('results-screen');
 
   const pct = Math.round((score / quizData.length) * 100);
+  submitResults(pct);
   const wrong = quizData.length - score;
 
   let emoji, title, subtitle;

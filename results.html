@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz Results Dashboard</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0f1729;
+    --card: #1a2540;
+    --card-border: #2a3a5c;
+    --accent: #3b82f6;
+    --accent-glow: rgba(59, 130, 246, 0.25);
+    --correct: #10b981;
+    --wrong: #ef4444;
+    --text: #e2e8f0;
+    --text-dim: #94a3b8;
+    --gold: #f59e0b;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 2rem;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+  .header h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, #fff 30%, var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+  }
+  .header p { color: var(--text-dim); }
+
+  .setup-banner {
+    max-width: 700px;
+    margin: 0 auto 2rem;
+    background: var(--card);
+    border: 1px solid var(--gold);
+    border-radius: 16px;
+    padding: 1.5rem 2rem;
+    text-align: center;
+  }
+  .setup-banner p { color: var(--text-dim); margin-bottom: 1rem; font-size: 0.9rem; }
+  .setup-banner input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border-radius: 10px;
+    border: 1px solid var(--card-border);
+    background: var(--bg);
+    color: var(--text);
+    font-family: inherit;
+    font-size: 0.9rem;
+    margin-bottom: 0.75rem;
+  }
+  .setup-banner input:focus { outline: none; border-color: var(--accent); }
+  .setup-banner button {
+    background: linear-gradient(135deg, var(--accent), #2563eb);
+    color: #fff;
+    border: none;
+    padding: 0.6rem 2rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.3s;
+  }
+  .setup-banner button:hover { transform: translateY(-1px); box-shadow: 0 4px 20px var(--accent-glow); }
+
+  .dashboard { max-width: 1100px; margin: 0 auto; display: none; }
+
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    text-align: center;
+  }
+  .stat-value {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin-bottom: 0.25rem;
+  }
+  .stat-value.blue { color: var(--accent); }
+  .stat-value.green { color: var(--correct); }
+  .stat-value.gold { color: var(--gold); }
+  .stat-value.red { color: var(--wrong); }
+  .stat-label {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .section-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    padding-left: 0.5rem;
+    border-left: 3px solid var(--accent);
+  }
+
+  .charts-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  @media (max-width: 768px) { .charts-row { grid-template-columns: 1fr; } }
+
+  .chart-card {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 1.5rem;
+  }
+  .chart-card h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--text-dim);
+  }
+
+  .bar-chart { display: flex; flex-direction: column; gap: 0.6rem; }
+  .bar-row { display: flex; align-items: center; gap: 0.75rem; }
+  .bar-label {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    width: 60px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .bar-track {
+    flex: 1;
+    height: 28px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 8px;
+    transition: width 0.8s ease;
+    display: flex;
+    align-items: center;
+    padding-left: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    min-width: fit-content;
+  }
+  .bar-fill.green { background: linear-gradient(90deg, var(--correct), #059669); }
+  .bar-fill.red { background: linear-gradient(90deg, var(--wrong), #dc2626); }
+  .bar-fill.blue { background: linear-gradient(90deg, var(--accent), #2563eb); }
+
+  .score-distribution { display: flex; flex-direction: column; gap: 0.5rem; }
+  .dist-row { display: flex; align-items: center; gap: 0.75rem; }
+  .dist-label {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    width: 70px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .dist-bar {
+    flex: 1;
+    height: 24px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .dist-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), #8b5cf6);
+    border-radius: 6px;
+    transition: width 0.8s ease;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 0.5rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+  }
+
+  .question-table {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    overflow-x: auto;
+  }
+  .question-table h3 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--text-dim);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  th, td {
+    text-align: left;
+    padding: 0.75rem 1rem;
+    font-size: 0.85rem;
+    border-bottom: 1px solid var(--card-border);
+  }
+  th {
+    color: var(--text-dim);
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+  }
+  td { color: var(--text); }
+  .pct-correct { color: var(--correct); font-weight: 700; }
+  .pct-wrong { color: var(--wrong); font-weight: 700; }
+
+  .refresh-bar {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  .refresh-btn {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    color: var(--text);
+    padding: 0.6rem 1.5rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border-radius: 10px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+  .refresh-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  .loading {
+    text-align: center;
+    padding: 3rem;
+    color: var(--text-dim);
+  }
+  .loading .spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--card-border);
+    border-top: 3px solid var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 1rem;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Quiz Results Dashboard</h1>
+  <p>Real-time summary of all quiz participants</p>
+</div>
+
+<div id="setup-banner" class="setup-banner">
+  <p>Enter your Google Apps Script URL to connect to the results database.</p>
+  <input type="text" id="script-url-input" placeholder="https://script.google.com/macros/s/...../exec">
+  <br>
+  <button onclick="saveAndLoad()">Connect</button>
+</div>
+
+<div class="dashboard" id="dashboard">
+  <div class="refresh-bar">
+    <button class="refresh-btn" onclick="loadData()">↻ Refresh Results</button>
+    <span id="last-updated" style="margin-left:1rem; font-size:0.8rem; color:var(--text-dim);"></span>
+  </div>
+
+  <div class="stats-row" id="stats-row"></div>
+
+  <div class="charts-row">
+    <div class="chart-card">
+      <h3>Score Distribution</h3>
+      <div class="score-distribution" id="score-dist"></div>
+    </div>
+    <div class="chart-card">
+      <h3>Correct vs Incorrect by Question</h3>
+      <div class="bar-chart" id="question-bars"></div>
+    </div>
+  </div>
+
+  <div class="question-table">
+    <h3>Per-Question Breakdown</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Question</th>
+          <th>% Correct</th>
+          <th>Most Chosen Wrong Answer</th>
+        </tr>
+      </thead>
+      <tbody id="question-tbody"></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="loading" id="loading" style="display:none;">
+  <div class="spinner"></div>
+  <p>Loading results...</p>
+</div>
+
+<script>
+let scriptUrl = localStorage.getItem('quiz_script_url') || '';
+
+function saveAndLoad() {
+  const url = document.getElementById('script-url-input').value.trim();
+  if (!url) return;
+  localStorage.setItem('quiz_script_url', url);
+  scriptUrl = url;
+  document.getElementById('setup-banner').style.display = 'none';
+  loadData();
+}
+
+if (scriptUrl) {
+  document.getElementById('setup-banner').style.display = 'none';
+  loadData();
+}
+
+function loadData() {
+  document.getElementById('loading').style.display = 'block';
+  document.getElementById('dashboard').style.display = 'none';
+
+  fetch(scriptUrl)
+    .then(r => r.json())
+    .then(data => {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('dashboard').style.display = 'block';
+      renderDashboard(data);
+    })
+    .catch(err => {
+      document.getElementById('loading').style.display = 'none';
+      alert('Error loading data. Check that your Script URL is correct and deployed.');
+      document.getElementById('setup-banner').style.display = 'block';
+    });
+}
+
+function renderDashboard(rows) {
+  if (!rows || rows.length === 0) {
+    document.getElementById('dashboard').innerHTML = '<div class="loading"><p>No results yet. Share the quiz link and wait for participants!</p></div>';
+    return;
+  }
+
+  document.getElementById('last-updated').textContent = 'Updated: ' + new Date().toLocaleTimeString();
+
+  const total = rows.length;
+  const scores = rows.map(r => r.percentage);
+  const avg = Math.round(scores.reduce((a, b) => a + b, 0) / total);
+  const perfect = scores.filter(s => s === 100).length;
+  const highest = Math.max(...scores);
+  const lowest = Math.min(...scores);
+
+  document.getElementById('stats-row').innerHTML = `
+    <div class="stat-card"><div class="stat-value blue">${total}</div><div class="stat-label">Participants</div></div>
+    <div class="stat-card"><div class="stat-value gold">${avg}%</div><div class="stat-label">Average Score</div></div>
+    <div class="stat-card"><div class="stat-value green">${perfect}</div><div class="stat-label">Perfect Scores</div></div>
+    <div class="stat-card"><div class="stat-value">${highest}% / ${lowest}%</div><div class="stat-label">Highest / Lowest</div></div>
+  `;
+
+  const buckets = { '0-16%': 0, '17-33%': 0, '34-50%': 0, '51-66%': 0, '67-83%': 0, '84-100%': 0 };
+  scores.forEach(s => {
+    if (s <= 16) buckets['0-16%']++;
+    else if (s <= 33) buckets['17-33%']++;
+    else if (s <= 50) buckets['34-50%']++;
+    else if (s <= 66) buckets['51-66%']++;
+    else if (s <= 83) buckets['67-83%']++;
+    else buckets['84-100%']++;
+  });
+  const maxBucket = Math.max(...Object.values(buckets), 1);
+  document.getElementById('score-dist').innerHTML = Object.entries(buckets).map(([label, count]) => `
+    <div class="dist-row">
+      <span class="dist-label">${label}</span>
+      <div class="dist-bar"><div class="dist-fill" style="width:${(count/maxBucket)*100}%">${count > 0 ? count : ''}</div></div>
+    </div>
+  `).join('');
+
+  const numQuestions = rows[0].answers ? rows[0].answers.length : 0;
+  const questionStats = [];
+
+  for (let i = 0; i < numQuestions; i++) {
+    let correctCount = 0;
+    const wrongAnswers = {};
+    let questionText = '';
+
+    rows.forEach(r => {
+      if (r.answers && r.answers[i]) {
+        const a = r.answers[i];
+        questionText = a.question || '';
+        if (a.is_correct) {
+          correctCount++;
+        } else if (a.chosen) {
+          wrongAnswers[a.chosen] = (wrongAnswers[a.chosen] || 0) + 1;
+        }
+      }
+    });
+
+    const pctCorrect = Math.round((correctCount / total) * 100);
+    const topWrong = Object.entries(wrongAnswers).sort((a, b) => b[1] - a[1])[0];
+
+    questionStats.push({
+      num: i + 1,
+      question: questionText,
+      pctCorrect,
+      topWrong: topWrong ? `${topWrong[0]} (${topWrong[1]})` : '—'
+    });
+  }
+
+  document.getElementById('question-bars').innerHTML = questionStats.map(q => `
+    <div class="bar-row">
+      <span class="bar-label">Q${q.num}</span>
+      <div class="bar-track">
+        <div class="bar-fill green" style="width:${q.pctCorrect}%">${q.pctCorrect}%</div>
+      </div>
+    </div>
+  `).join('');
+
+  document.getElementById('question-tbody').innerHTML = questionStats.map(q => `
+    <tr>
+      <td>${q.num}</td>
+      <td>${q.question}</td>
+      <td class="${q.pctCorrect >= 50 ? 'pct-correct' : 'pct-wrong'}">${q.pctCorrect}%</td>
+      <td>${q.topWrong}</td>
+    </tr>
+  `).join('');
+}
+</script>
+</body>
+</html>
