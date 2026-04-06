@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brazilian Mass Market Quiz</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0f1729;
+    --card: #1a2540;
+    --card-border: #2a3a5c;
+    --accent: #3b82f6;
+    --accent-glow: rgba(59, 130, 246, 0.25);
+    --correct: #10b981;
+    --correct-glow: rgba(16, 185, 129, 0.2);
+    --wrong: #ef4444;
+    --wrong-glow: rgba(239, 68, 68, 0.2);
+    --text: #e2e8f0;
+    --text-dim: #94a3b8;
+    --gold: #f59e0b;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .screen {
+    display: none;
+    width: 100vw;
+    height: 100vh;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    animation: fadeIn 0.5s ease;
+  }
+  .screen.active { display: flex; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes countUp {
+    from { opacity: 0; transform: scale(0.5); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  @keyframes confetti-fall {
+    0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+  }
+
+  .intro-badge {
+    background: linear-gradient(135deg, var(--accent), #8b5cf6);
+    padding: 0.4rem 1.2rem;
+    border-radius: 50px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 1.5rem;
+  }
+  .intro-title {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    text-align: center;
+    line-height: 1.15;
+    margin-bottom: 0.75rem;
+    background: linear-gradient(135deg, #fff 30%, var(--accent));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .intro-sub {
+    color: var(--text-dim);
+    font-size: 1.1rem;
+    margin-bottom: 2.5rem;
+    text-align: center;
+  }
+  .intro-stats {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 3rem;
+  }
+  .intro-stat { text-align: center; }
+  .intro-stat-value {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  .intro-stat-label {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .btn {
+    background: linear-gradient(135deg, var(--accent), #2563eb);
+    color: #fff;
+    border: none;
+    padding: 1rem 3rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: inherit;
+    box-shadow: 0 4px 20px var(--accent-glow);
+  }
+  .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px var(--accent-glow);
+  }
+  .btn:active { transform: translateY(0); }
+  .btn.secondary {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    box-shadow: none;
+  }
+  .btn.secondary:hover {
+    border-color: var(--accent);
+    box-shadow: 0 4px 20px var(--accent-glow);
+  }
+
+  .quiz-container {
+    width: 100%;
+    max-width: 780px;
+  }
+
+  .progress-bar-wrap {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  .progress-track {
+    flex: 1;
+    height: 6px;
+    background: var(--card);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), #8b5cf6);
+    border-radius: 3px;
+    transition: width 0.5s ease;
+  }
+  .progress-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--text-dim);
+    white-space: nowrap;
+  }
+
+  .question-card {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 20px;
+    padding: 2.5rem;
+    animation: slideUp 0.4s ease;
+  }
+
+  .question-number {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--accent);
+    margin-bottom: 1rem;
+  }
+
+  .question-text {
+    font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+    font-weight: 600;
+    line-height: 1.5;
+    margin-bottom: 0.5rem;
+  }
+
+  .question-hint {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    margin-bottom: 2rem;
+    font-style: italic;
+  }
+
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .option {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: rgba(255,255,255,0.03);
+    border: 1.5px solid var(--card-border);
+    border-radius: 14px;
+    padding: 1rem 1.25rem;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    font-family: inherit;
+    font-size: 1rem;
+    color: var(--text);
+    text-align: left;
+    width: 100%;
+  }
+  .option:hover:not(.disabled) {
+    border-color: var(--accent);
+    background: var(--accent-glow);
+    transform: translateX(4px);
+  }
+  .option.selected-correct {
+    border-color: var(--correct);
+    background: var(--correct-glow);
+    box-shadow: 0 0 20px var(--correct-glow);
+  }
+  .option.selected-wrong {
+    border-color: var(--wrong);
+    background: var(--wrong-glow);
+    box-shadow: 0 0 20px var(--wrong-glow);
+  }
+  .option.reveal-correct {
+    border-color: var(--correct);
+    background: var(--correct-glow);
+  }
+  .option.disabled { cursor: default; opacity: 0.6; }
+  .option.disabled.selected-correct,
+  .option.disabled.selected-wrong,
+  .option.disabled.reveal-correct { opacity: 1; }
+
+  .option-letter {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.85rem;
+    background: rgba(255,255,255,0.06);
+    flex-shrink: 0;
+    transition: all 0.25s;
+  }
+  .option:hover:not(.disabled) .option-letter {
+    background: var(--accent);
+    color: #fff;
+  }
+  .selected-correct .option-letter { background: var(--correct); color: #fff; }
+  .selected-wrong .option-letter { background: var(--wrong); color: #fff; }
+  .reveal-correct .option-letter { background: var(--correct); color: #fff; }
+
+  .option-text { flex: 1; line-height: 1.4; }
+
+  .feedback-bar {
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 1.5rem;
+    padding: 1rem 1.5rem;
+    border-radius: 14px;
+    animation: slideUp 0.3s ease;
+  }
+  .feedback-bar.show { display: flex; }
+  .feedback-bar.correct {
+    background: var(--correct-glow);
+    border: 1px solid rgba(16,185,129,0.3);
+  }
+  .feedback-bar.wrong {
+    background: var(--wrong-glow);
+    border: 1px solid rgba(239,68,68,0.3);
+  }
+  .feedback-icon { font-size: 1.5rem; margin-right: 0.75rem; }
+  .feedback-text { font-weight: 600; font-size: 1rem; flex: 1; }
+
+  .next-btn {
+    margin-top: 1.5rem;
+    display: none;
+    margin-left: auto;
+  }
+  .next-btn.show { display: block; }
+
+  .results-card {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    border-radius: 24px;
+    padding: 3rem;
+    text-align: center;
+    max-width: 550px;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+  .results-emoji {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+    animation: countUp 0.5s ease;
+  }
+  .results-title {
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+  }
+  .results-subtitle {
+    color: var(--text-dim);
+    margin-bottom: 2rem;
+  }
+
+  .score-ring-wrap {
+    position: relative;
+    width: 160px;
+    height: 160px;
+    margin: 0 auto 2rem;
+  }
+  .score-ring-wrap svg { transform: rotate(-90deg); }
+  .score-ring-bg {
+    fill: none;
+    stroke: var(--card-border);
+    stroke-width: 10;
+  }
+  .score-ring-fill {
+    fill: none;
+    stroke: var(--accent);
+    stroke-width: 10;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1.5s ease;
+  }
+  .score-ring-fill.perfect { stroke: var(--gold); }
+  .score-ring-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 2.2rem;
+    font-weight: 800;
+  }
+
+  .results-details {
+    display: flex;
+    justify-content: center;
+    gap: 2.5rem;
+    margin-bottom: 2rem;
+  }
+  .results-detail-item { text-align: center; }
+  .results-detail-value {
+    font-size: 1.4rem;
+    font-weight: 700;
+  }
+  .results-detail-value.green { color: var(--correct); }
+  .results-detail-value.red { color: var(--wrong); }
+  .results-detail-label {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .results-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+  }
+
+  .confetti-piece {
+    position: fixed;
+    width: 10px;
+    height: 10px;
+    border-radius: 2px;
+    animation: confetti-fall linear forwards;
+    pointer-events: none;
+    z-index: 999;
+  }
+
+  .presenter-controls {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    display: flex;
+    gap: 0.5rem;
+    z-index: 100;
+  }
+  .presenter-btn {
+    background: var(--card);
+    border: 1px solid var(--card-border);
+    color: var(--text-dim);
+    padding: 0.5rem 0.75rem;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.75rem;
+    transition: all 0.2s;
+  }
+  .presenter-btn:hover {
+    border-color: var(--accent);
+    color: var(--text);
+  }
+
+  .fx-overlay {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 50;
+  }
+</style>
+</head>
+<body>
+
+<div class="screen active" id="intro-screen">
+  <div class="intro-badge">Interactive Quiz</div>
+  <h1 class="intro-title">Understanding the<br>Brazilian Mass Market</h1>
+  <p class="intro-sub">Test your knowledge about Brazil's largest consumer segment</p>
+  <div class="intro-stats">
+    <div class="intro-stat">
+      <div class="intro-stat-value">6</div>
+      <div class="intro-stat-label">Questions</div>
+    </div>
+    <div class="intro-stat">
+      <div class="intro-stat-value">~3 min</div>
+      <div class="intro-stat-label">Duration</div>
+    </div>
+  </div>
+  <button class="btn" onclick="startQuiz()">Start Quiz</button>
+</div>
+
+<div class="screen" id="quiz-screen">
+  <div class="quiz-container">
+    <div class="progress-bar-wrap">
+      <div class="progress-track">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+      <div class="progress-label" id="progress-label">1 / 6</div>
+    </div>
+    <div class="question-card" id="question-card">
+      <div class="question-number" id="q-number"></div>
+      <div class="question-text" id="q-text"></div>
+      <div class="question-hint" id="q-hint"></div>
+      <div class="options" id="options-list"></div>
+      <div class="feedback-bar" id="feedback-bar">
+        <span class="feedback-icon" id="feedback-icon"></span>
+        <span class="feedback-text" id="feedback-text"></span>
+      </div>
+      <button class="btn next-btn" id="next-btn" onclick="nextQuestion()">Next Question →</button>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="results-screen">
+  <div class="results-card">
+    <div class="results-emoji" id="results-emoji"></div>
+    <div class="results-title" id="results-title"></div>
+    <div class="results-subtitle" id="results-subtitle"></div>
+    <div class="score-ring-wrap">
+      <svg width="160" height="160" viewBox="0 0 160 160">
+        <circle class="score-ring-bg" cx="80" cy="80" r="65"/>
+        <circle class="score-ring-fill" id="score-ring" cx="80" cy="80" r="65"
+          stroke-dasharray="408.4" stroke-dashoffset="408.4"/>
+      </svg>
+      <div class="score-ring-text" id="score-text">0%</div>
+    </div>
+    <div class="results-details">
+      <div class="results-detail-item">
+        <div class="results-detail-value green" id="correct-count">0</div>
+        <div class="results-detail-label">Correct</div>
+      </div>
+      <div class="results-detail-item">
+        <div class="results-detail-value red" id="wrong-count">0</div>
+        <div class="results-detail-label">Incorrect</div>
+      </div>
+    </div>
+    <div class="results-actions">
+      <button class="btn" onclick="restartQuiz()">Try Again</button>
+    </div>
+  </div>
+</div>
+
+<div class="fx-overlay" id="fx-overlay"></div>
+
+<div class="presenter-controls" id="presenter-controls" style="display:none;">
+  <button class="presenter-btn" onclick="prevQuestion()">← Prev</button>
+  <button class="presenter-btn" onclick="nextQuestion()">Next →</button>
+  <button class="presenter-btn" onclick="revealAnswer()">Reveal</button>
+</div>
+
+<script>
+const quizData = [
+  {
+    question: "What is the approximate average per capita monthly income for the majority of the Brazilian Mass Market (Classes B2 through DE)?",
+    hint: "Reference: $1 US ≈ R$ 5.25 Reais",
+    options: [
+      { text: "R$ 1,943.00", value: "a" },
+      { text: "R$ 1,638.00", value: "b" },
+      { text: "R$ 2,456.00", value: "c" },
+      { text: "R$ 3,534.00", value: "d" }
+    ],
+    correct: "a"
+  },
+  {
+    question: "How many Brazilians are considered functionally illiterate?",
+    hint: "Unable to perform simple tasks such as comparing prices in a table or identifying the main idea of a newspaper editorial.",
+    options: [
+      { text: "29%", value: "a" },
+      { text: "14%", value: "b" },
+      { text: "20%", value: "c" },
+      { text: "35%", value: "d" }
+    ],
+    correct: "a"
+  },
+  {
+    question: "What is the core definition of \"life stability\" for the Mass Market segment?",
+    hint: "",
+    options: [
+      { text: "Having enough income to last the month", value: "a" },
+      { text: "Having saved economies for unexpected emergencies", value: "b" },
+      { text: "Save continuously to achieve my dreams", value: "c" },
+      { text: "Having enough income for the following months", value: "d" }
+    ],
+    correct: "a"
+  },
+  {
+    question: "How many rooms on average are there in Mass Market homes?",
+    hint: "",
+    options: [
+      { text: "1 room", value: "a" },
+      { text: "2 rooms", value: "b" },
+      { text: "3 rooms", value: "c" },
+      { text: "4 rooms", value: "d" }
+    ],
+    correct: "d"
+  },
+  {
+    question: "What percentage of their income is spent on debt payment?",
+    hint: "",
+    options: [
+      { text: "30%", value: "a" },
+      { text: "5%", value: "b" },
+      { text: "10%", value: "c" },
+      { text: "20%", value: "d" }
+    ],
+    correct: "a"
+  },
+  {
+    question: "What is the Mass Market's average monthly spend on BETs (betting)?",
+    hint: "Reference: $1 US ≈ R$ 5.25 Reais",
+    options: [
+      { text: "R$ 135 / month", value: "a" },
+      { text: "R$ 230 / month", value: "b" },
+      { text: "R$ 55 / month", value: "c" },
+      { text: "R$ 270 / month", value: "d" }
+    ],
+    correct: "a"
+  }
+];
+
+let currentQ = 0;
+let score = 0;
+let answered = false;
+const letters = ["A", "B", "C", "D"];
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.getElementById(id).style.animation = 'none';
+  void document.getElementById(id).offsetHeight;
+  document.getElementById(id).style.animation = 'fadeIn 0.5s ease';
+}
+
+function startQuiz() {
+  currentQ = 0;
+  score = 0;
+  showScreen('quiz-screen');
+  document.getElementById('presenter-controls').style.display = 'flex';
+  renderQuestion();
+}
+
+function renderQuestion() {
+  answered = false;
+  const q = quizData[currentQ];
+  const shuffled = [...q.options].sort(() => Math.random() - 0.5);
+  quizData[currentQ]._shuffled = shuffled;
+
+  document.getElementById('progress-fill').style.width = ((currentQ) / quizData.length * 100) + '%';
+  document.getElementById('progress-label').textContent = `${currentQ + 1} / ${quizData.length}`;
+  document.getElementById('q-number').textContent = `Question ${currentQ + 1}`;
+  document.getElementById('q-text').textContent = q.question;
+  document.getElementById('q-hint').textContent = q.hint;
+  document.getElementById('q-hint').style.display = q.hint ? 'block' : 'none';
+
+  const list = document.getElementById('options-list');
+  list.innerHTML = '';
+  shuffled.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'option';
+    btn.dataset.value = opt.value;
+    btn.innerHTML = `
+      <span class="option-letter">${letters[i]}</span>
+      <span class="option-text">${opt.text}</span>
+    `;
+    btn.addEventListener('click', () => selectOption(btn, opt.value));
+    list.appendChild(btn);
+  });
+
+  document.getElementById('feedback-bar').className = 'feedback-bar';
+  document.getElementById('next-btn').classList.remove('show');
+
+  const card = document.getElementById('question-card');
+  card.style.animation = 'none';
+  void card.offsetHeight;
+  card.style.animation = 'slideUp 0.4s ease';
+}
+
+function selectOption(btn, value) {
+  if (answered) return;
+  answered = true;
+
+  const q = quizData[currentQ];
+  const isCorrect = value === q.correct;
+  if (isCorrect) score++;
+
+  document.querySelectorAll('.option').forEach(o => {
+    o.classList.add('disabled');
+    if (o.dataset.value === q.correct) {
+      o.classList.add(o === btn ? 'selected-correct' : 'reveal-correct');
+    }
+  });
+  if (!isCorrect) btn.classList.add('selected-wrong');
+
+  const fb = document.getElementById('feedback-bar');
+  fb.className = `feedback-bar show ${isCorrect ? 'correct' : 'wrong'}`;
+  document.getElementById('feedback-icon').textContent = isCorrect ? '✓' : '✗';
+  document.getElementById('feedback-text').textContent = isCorrect ? 'Correct!' : 'Not quite!';
+
+  document.getElementById('next-btn').classList.add('show');
+  document.getElementById('next-btn').textContent =
+    currentQ === quizData.length - 1 ? 'See Results →' : 'Next Question →';
+
+  document.getElementById('progress-fill').style.width = ((currentQ + 1) / quizData.length * 100) + '%';
+}
+
+function revealAnswer() {
+  if (answered) return;
+  answered = true;
+  const q = quizData[currentQ];
+  document.querySelectorAll('.option').forEach(o => {
+    o.classList.add('disabled');
+    if (o.dataset.value === q.correct) o.classList.add('reveal-correct');
+  });
+  const fb = document.getElementById('feedback-bar');
+  fb.className = 'feedback-bar show correct';
+  document.getElementById('feedback-icon').textContent = '→';
+  document.getElementById('feedback-text').textContent = 'Answer revealed';
+  document.getElementById('next-btn').classList.add('show');
+  document.getElementById('next-btn').textContent =
+    currentQ === quizData.length - 1 ? 'See Results →' : 'Next Question →';
+  document.getElementById('progress-fill').style.width = ((currentQ + 1) / quizData.length * 100) + '%';
+}
+
+function nextQuestion() {
+  if (!answered) return;
+  currentQ++;
+  if (currentQ >= quizData.length) {
+    showResults();
+  } else {
+    renderQuestion();
+  }
+}
+
+function prevQuestion() {
+  if (currentQ > 0) {
+    currentQ--;
+    renderQuestion();
+  }
+}
+
+function showResults() {
+  document.getElementById('presenter-controls').style.display = 'none';
+  showScreen('results-screen');
+
+  const pct = Math.round((score / quizData.length) * 100);
+  const wrong = quizData.length - score;
+
+  let emoji, title, subtitle;
+  if (pct === 100) {
+    emoji = '🏆'; title = 'Perfect Score!'; subtitle = 'You truly know the Brazilian Mass Market!';
+    launchConfetti();
+  } else if (pct >= 66) {
+    emoji = '🎯'; title = 'Great Job!'; subtitle = 'You have a solid understanding of this market.';
+  } else if (pct >= 33) {
+    emoji = '📊'; title = 'Good Effort!'; subtitle = 'There\'s more to learn about the Mass Market.';
+  } else {
+    emoji = '📚'; title = 'Keep Learning!'; subtitle = 'The Mass Market has many surprising insights.';
+  }
+
+  document.getElementById('results-emoji').textContent = emoji;
+  document.getElementById('results-title').textContent = title;
+  document.getElementById('results-subtitle').textContent = subtitle;
+  document.getElementById('correct-count').textContent = score;
+  document.getElementById('wrong-count').textContent = wrong;
+
+  const ring = document.getElementById('score-ring');
+  const circumference = 408.4;
+  ring.classList.toggle('perfect', pct === 100);
+  setTimeout(() => {
+    ring.style.strokeDashoffset = circumference - (circumference * pct / 100);
+  }, 200);
+
+  let counter = 0;
+  const target = pct;
+  const step = Math.max(1, Math.floor(target / 30));
+  const interval = setInterval(() => {
+    counter = Math.min(counter + step, target);
+    document.getElementById('score-text').textContent = counter + '%';
+    if (counter >= target) clearInterval(interval);
+  }, 30);
+}
+
+function launchConfetti() {
+  const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
+  const overlay = document.getElementById('fx-overlay');
+  for (let i = 0; i < 60; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    piece.style.left = Math.random() * 100 + 'vw';
+    piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+    piece.style.width = (Math.random() * 8 + 6) + 'px';
+    piece.style.height = (Math.random() * 8 + 6) + 'px';
+    piece.style.animationDuration = (Math.random() * 2 + 2) + 's';
+    piece.style.animationDelay = (Math.random() * 1.5) + 's';
+    overlay.appendChild(piece);
+  }
+  setTimeout(() => { overlay.innerHTML = ''; }, 5000);
+}
+
+function restartQuiz() {
+  currentQ = 0;
+  score = 0;
+  showScreen('intro-screen');
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight' || e.key === ' ') {
+    e.preventDefault();
+    if (document.getElementById('intro-screen').classList.contains('active')) {
+      startQuiz();
+    } else if (answered) {
+      nextQuestion();
+    }
+  }
+  if (e.key === 'ArrowLeft') prevQuestion();
+  if (e.key === 'r' || e.key === 'R') revealAnswer();
+  const numKey = parseInt(e.key);
+  if (numKey >= 1 && numKey <= 4 && !answered) {
+    const opts = document.querySelectorAll('.option');
+    if (opts[numKey - 1]) opts[numKey - 1].click();
+  }
+});
+</script>
+</body>
+</html>
