@@ -116,17 +116,8 @@
     flex-wrap: wrap;
     gap: 0.75rem;
   }
-  .status-left { display: flex; align-items: center; gap: 1rem; }
-  .status-right { display: flex; align-items: center; gap: 1rem; }
-  .auto-refresh-label {
-    font-size: 0.8rem;
-    color: var(--text-dim);
-  }
-  .countdown {
-    font-size: 0.8rem;
-    color: var(--text-dim);
-    font-variant-numeric: tabular-nums;
-  }
+  .countdown { font-size: 0.8rem; color: var(--text-dim); font-variant-numeric: tabular-nums; }
+  .auto-refresh-label { font-size: 0.8rem; color: var(--text-dim); }
   .manual-refresh {
     background: var(--card);
     border: 1px solid var(--card-border);
@@ -155,31 +146,14 @@
     border-radius: 16px;
     padding: 1.25rem;
     text-align: center;
-    transition: transform 0.3s;
   }
-  .stat-card.highlight {
-    animation: pop 0.4s ease;
-  }
-  @keyframes pop {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
-  }
-  .stat-value {
-    font-size: 2.2rem;
-    font-weight: 800;
-    margin-bottom: 0.2rem;
-    transition: color 0.3s;
-  }
+  .stat-card.highlight { animation: pop 0.4s ease; }
+  @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+  .stat-value { font-size: 2.2rem; font-weight: 800; margin-bottom: 0.2rem; }
   .stat-value.blue { color: var(--accent); }
   .stat-value.green { color: var(--correct); }
   .stat-value.gold { color: var(--gold); }
-  .stat-label {
-    font-size: 0.75rem;
-    color: var(--text-dim);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
+  .stat-label { font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
 
   .charts-row {
     display: grid;
@@ -195,124 +169,51 @@
     border-radius: 16px;
     padding: 1.5rem;
   }
-  .chart-card h3 {
-    font-size: 0.9rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-    color: var(--text-dim);
-  }
+  .chart-card h3 { font-size: 0.9rem; font-weight: 600; margin-bottom: 1rem; color: var(--text-dim); }
 
   .bar-chart { display: flex; flex-direction: column; gap: 0.5rem; }
   .bar-row { display: flex; align-items: center; gap: 0.6rem; }
-  .bar-label {
-    font-size: 0.8rem;
-    color: var(--text-dim);
-    width: 30px;
-    text-align: right;
-    flex-shrink: 0;
-  }
-  .bar-track {
-    flex: 1;
-    height: 26px;
-    background: rgba(255,255,255,0.04);
-    border-radius: 8px;
-    overflow: hidden;
-  }
+  .bar-label { font-size: 0.8rem; color: var(--text-dim); width: 30px; text-align: right; flex-shrink: 0; }
+  .bar-track { flex: 1; height: 26px; background: rgba(255,255,255,0.04); border-radius: 8px; overflow: hidden; }
   .bar-fill {
-    height: 100%;
-    border-radius: 8px;
-    transition: width 0.8s ease;
-    display: flex;
-    align-items: center;
-    padding-left: 0.5rem;
-    font-size: 0.75rem;
-    font-weight: 600;
-    min-width: fit-content;
+    height: 100%; border-radius: 8px; transition: width 0.8s ease;
+    display: flex; align-items: center; padding-left: 0.5rem;
+    font-size: 0.75rem; font-weight: 600; min-width: fit-content;
   }
   .bar-fill.green { background: linear-gradient(90deg, var(--correct), #059669); }
   .bar-fill.red { background: linear-gradient(90deg, var(--wrong), #dc2626); }
 
   .score-distribution { display: flex; flex-direction: column; gap: 0.4rem; }
   .dist-row { display: flex; align-items: center; gap: 0.6rem; }
-  .dist-label {
-    font-size: 0.75rem;
-    color: var(--text-dim);
-    width: 65px;
-    text-align: right;
-    flex-shrink: 0;
-  }
-  .dist-bar {
-    flex: 1;
-    height: 22px;
-    background: rgba(255,255,255,0.04);
-    border-radius: 6px;
-    overflow: hidden;
-  }
+  .dist-label { font-size: 0.75rem; color: var(--text-dim); width: 65px; text-align: right; flex-shrink: 0; }
+  .dist-bar { flex: 1; height: 22px; background: rgba(255,255,255,0.04); border-radius: 6px; overflow: hidden; }
   .dist-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--accent), #8b5cf6);
-    border-radius: 6px;
-    transition: width 0.8s ease;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    padding-right: 0.5rem;
-    font-size: 0.7rem;
-    font-weight: 600;
+    height: 100%; background: linear-gradient(90deg, var(--accent), #8b5cf6);
+    border-radius: 6px; transition: width 0.8s ease;
+    display: flex; align-items: center; justify-content: flex-end;
+    padding-right: 0.5rem; font-size: 0.7rem; font-weight: 600;
   }
 
   .question-table {
-    background: var(--card);
-    border: 1px solid var(--card-border);
-    border-radius: 16px;
-    padding: 1.5rem;
-    margin-bottom: 2rem;
-    overflow-x: auto;
+    background: var(--card); border: 1px solid var(--card-border);
+    border-radius: 16px; padding: 1.5rem; margin-bottom: 2rem; overflow-x: auto;
   }
-  .question-table h3 {
-    font-size: 0.9rem;
-    font-weight: 600;
-    margin-bottom: 1rem;
-    color: var(--text-dim);
-  }
+  .question-table h3 { font-size: 0.9rem; font-weight: 600; margin-bottom: 1rem; color: var(--text-dim); }
   table { width: 100%; border-collapse: collapse; }
-  th, td {
-    text-align: left;
-    padding: 0.6rem 0.75rem;
-    font-size: 0.82rem;
-    border-bottom: 1px solid var(--card-border);
-  }
-  th {
-    color: var(--text-dim);
-    font-weight: 600;
-    text-transform: uppercase;
-    font-size: 0.7rem;
-    letter-spacing: 1px;
-  }
+  th, td { text-align: left; padding: 0.6rem 0.75rem; font-size: 0.82rem; border-bottom: 1px solid var(--card-border); }
+  th { color: var(--text-dim); font-weight: 600; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 1px; }
   .pct-correct { color: var(--correct); font-weight: 700; }
   .pct-wrong { color: var(--wrong); font-weight: 700; }
 
-  .empty-state {
-    text-align: center;
-    padding: 4rem 2rem;
-    color: var(--text-dim);
-  }
+  .empty-state { text-align: center; padding: 4rem 2rem; color: var(--text-dim); }
   .empty-state .icon { font-size: 3rem; margin-bottom: 1rem; }
   .empty-state h2 { font-size: 1.3rem; color: var(--text); margin-bottom: 0.5rem; }
 
-  .loading {
-    text-align: center;
-    padding: 3rem;
-    color: var(--text-dim);
-  }
+  .loading { text-align: center; padding: 3rem; color: var(--text-dim); }
   .spinner {
-    width: 36px;
-    height: 36px;
-    border: 3px solid var(--card-border);
-    border-top: 3px solid var(--accent);
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    margin: 0 auto 1rem;
+    width: 36px; height: 36px;
+    border: 3px solid var(--card-border); border-top: 3px solid var(--accent);
+    border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 1rem;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
 </style>
@@ -330,25 +231,21 @@
 
 <div id="setup-banner" class="setup-banner">
   <h2>Connect to Results</h2>
-  <p>Enter your Google Apps Script URL to start displaying live results.</p>
-  <input type="text" id="script-url-input" placeholder="https://script.google.com/macros/s/...../exec">
+  <p>Enter the published Google Sheet CSV URL to display live results.</p>
+  <input type="text" id="sheet-url-input" placeholder="https://docs.google.com/spreadsheets/d/e/.../pub?output=csv">
   <br>
   <button class="setup-btn" onclick="saveAndLoad()">Connect</button>
 </div>
 
 <div class="dashboard" id="dashboard">
   <div class="status-bar">
-    <div class="status-left">
-      <span class="countdown" id="countdown"></span>
-    </div>
-    <div class="status-right">
+    <div><span class="countdown" id="countdown"></span></div>
+    <div style="display:flex; align-items:center; gap:1rem;">
       <span class="auto-refresh-label" id="last-updated"></span>
       <button class="manual-refresh" onclick="loadData()">↻ Refresh Now</button>
     </div>
   </div>
-
   <div class="stats-row" id="stats-row"></div>
-
   <div class="charts-row">
     <div class="chart-card">
       <h3>Score Distribution</h3>
@@ -359,18 +256,10 @@
       <div class="bar-chart" id="question-bars"></div>
     </div>
   </div>
-
   <div class="question-table">
     <h3>Per-Question Breakdown</h3>
     <table>
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Question</th>
-          <th>% Correct</th>
-          <th>Most Chosen Wrong Answer</th>
-        </tr>
-      </thead>
+      <thead><tr><th>#</th><th>Question</th><th>% Correct</th><th>Most Chosen Wrong Answer</th></tr></thead>
       <tbody id="question-tbody"></tbody>
     </table>
   </div>
@@ -384,23 +273,22 @@
 <script>
 const REFRESH_INTERVAL = 15;
 const WINDOW_MINUTES = 10;
-
-let scriptUrl = localStorage.getItem('quiz_script_url') || '';
+let sheetUrl = localStorage.getItem('quiz_sheet_url') || '';
 let refreshTimer = null;
 let countdownTimer = null;
 let secondsLeft = REFRESH_INTERVAL;
 let previousCount = 0;
 
 function saveAndLoad() {
-  const url = document.getElementById('script-url-input').value.trim();
+  const url = document.getElementById('sheet-url-input').value.trim();
   if (!url) return;
-  localStorage.setItem('quiz_script_url', url);
-  scriptUrl = url;
+  localStorage.setItem('quiz_sheet_url', url);
+  sheetUrl = url;
   document.getElementById('setup-banner').style.display = 'none';
   startLive();
 }
 
-if (scriptUrl) {
+if (sheetUrl) {
   document.getElementById('setup-banner').style.display = 'none';
   startLive();
 }
@@ -416,52 +304,90 @@ function startAutoRefresh() {
   clearInterval(countdownTimer);
   secondsLeft = REFRESH_INTERVAL;
   updateCountdown();
-
-  countdownTimer = setInterval(() => {
-    secondsLeft--;
-    updateCountdown();
-  }, 1000);
-
-  refreshTimer = setInterval(() => {
-    secondsLeft = REFRESH_INTERVAL;
-    loadData();
-  }, REFRESH_INTERVAL * 1000);
+  countdownTimer = setInterval(() => { secondsLeft--; updateCountdown(); }, 1000);
+  refreshTimer = setInterval(() => { secondsLeft = REFRESH_INTERVAL; loadData(); }, REFRESH_INTERVAL * 1000);
 }
 
 function updateCountdown() {
-  document.getElementById('countdown').textContent = `Next refresh in ${secondsLeft}s`;
+  document.getElementById('countdown').textContent = 'Next refresh in ' + secondsLeft + 's';
+}
+
+function parseCSV(text) {
+  const lines = text.trim().split('\n');
+  if (lines.length < 2) return [];
+  const headers = parseCSVLine(lines[0]);
+  return lines.slice(1).map(line => {
+    const vals = parseCSVLine(line);
+    const obj = {};
+    headers.forEach((h, i) => obj[h.trim()] = (vals[i] || '').trim());
+    return obj;
+  });
+}
+
+function parseCSVLine(line) {
+  const result = [];
+  let current = '';
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (inQuotes) {
+      if (ch === '"' && line[i + 1] === '"') { current += '"'; i++; }
+      else if (ch === '"') { inQuotes = false; }
+      else { current += ch; }
+    } else {
+      if (ch === '"') { inQuotes = true; }
+      else if (ch === ',') { result.push(current); current = ''; }
+      else { current += ch; }
+    }
+  }
+  result.push(current);
+  return result;
 }
 
 function loadData() {
   const loadingEl = document.getElementById('loading');
   const dashboardEl = document.getElementById('dashboard');
-
   if (dashboardEl.style.display === 'none' || dashboardEl.style.display === '') {
     loadingEl.style.display = 'block';
   }
 
-  fetch(scriptUrl)
-    .then(r => r.json())
-    .then(data => {
+  fetch(sheetUrl + '&_t=' + Date.now())
+    .then(r => r.text())
+    .then(csv => {
       loadingEl.style.display = 'none';
       dashboardEl.style.display = 'block';
 
+      const rawRows = parseCSV(csv);
       const now = new Date();
       const cutoff = new Date(now.getTime() - WINDOW_MINUTES * 60 * 1000);
-      const recent = data.filter(r => {
-        if (!r.timestamp) return true;
-        const t = new Date(r.timestamp);
+
+      const rows = rawRows.filter(r => {
+        const ts = r['Timestamp'] || r['timestamp'] || '';
+        if (!ts) return true;
+        const t = new Date(ts);
         return t >= cutoff;
+      }).map(r => {
+        const pctRaw = r['Percentage'] || r['percentage'] || '0';
+        const pct = parseInt(pctRaw) || 0;
+        const scoreRaw = r['Score'] || r['score'] || '0';
+        const scoreParts = scoreRaw.split('/');
+        const sc = parseInt(scoreParts[0]) || 0;
+        const total = parseInt(scoreParts[1]) || 7;
+        let answers = [];
+        try {
+          const answersRaw = r['Answers'] || r['answers'] || '[]';
+          answers = JSON.parse(answersRaw);
+        } catch(e) {}
+        return { percentage: pct, score: sc, total: total, answers: answers };
       });
 
-      renderDashboard(recent);
-      document.getElementById('last-updated').textContent =
-        'Updated ' + now.toLocaleTimeString();
+      renderDashboard(rows);
+      document.getElementById('last-updated').textContent = 'Updated ' + now.toLocaleTimeString();
     })
     .catch(() => {
       loadingEl.style.display = 'none';
       if (dashboardEl.style.display === 'none' || dashboardEl.style.display === '') {
-        alert('Error loading data. Check that your Script URL is correct and deployed.');
+        alert('Error loading data. Check that the Sheet URL is correct and published.');
         document.getElementById('setup-banner').style.display = 'block';
         document.getElementById('live-badge').style.display = 'none';
       }
@@ -470,19 +396,10 @@ function loadData() {
 
 function renderDashboard(rows) {
   if (!rows || rows.length === 0) {
-    document.getElementById('stats-row').innerHTML = '';
+    document.getElementById('stats-row').innerHTML = '<div style="grid-column:1/-1;"><div class="empty-state"><div class="icon">&#9203;</div><h2>Waiting for participants...</h2><p>Results will appear here automatically as people complete the quiz.</p></div></div>';
     document.getElementById('score-dist').innerHTML = '';
     document.getElementById('question-bars').innerHTML = '';
     document.getElementById('question-tbody').innerHTML = '';
-
-    document.getElementById('stats-row').innerHTML = `
-      <div style="grid-column: 1/-1;">
-        <div class="empty-state">
-          <div class="icon">⏳</div>
-          <h2>Waiting for participants...</h2>
-          <p>Results will appear here automatically as people complete the quiz.</p>
-        </div>
-      </div>`;
     return;
   }
 
@@ -497,22 +414,10 @@ function renderDashboard(rows) {
   const popClass = isNew ? 'highlight' : '';
 
   document.getElementById('stats-row').innerHTML = `
-    <div class="stat-card ${popClass}">
-      <div class="stat-value blue">${total}</div>
-      <div class="stat-label">Participants</div>
-    </div>
-    <div class="stat-card ${popClass}">
-      <div class="stat-value gold">${avg}%</div>
-      <div class="stat-label">Average Score</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-value green">${perfect}</div>
-      <div class="stat-label">Perfect Scores</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-value" style="color:var(--accent)">${highest}%</div>
-      <div class="stat-label">Highest Score</div>
-    </div>`;
+    <div class="stat-card ${popClass}"><div class="stat-value blue">${total}</div><div class="stat-label">Participants</div></div>
+    <div class="stat-card ${popClass}"><div class="stat-value gold">${avg}%</div><div class="stat-label">Average Score</div></div>
+    <div class="stat-card"><div class="stat-value green">${perfect}</div><div class="stat-label">Perfect Scores</div></div>
+    <div class="stat-card"><div class="stat-value" style="color:var(--accent)">${highest}%</div><div class="stat-label">Highest Score</div></div>`;
 
   const buckets = { '0-16%': 0, '17-33%': 0, '34-50%': 0, '51-66%': 0, '67-83%': 0, '84-100%': 0 };
   scores.forEach(s => {
@@ -524,58 +429,45 @@ function renderDashboard(rows) {
     else buckets['84-100%']++;
   });
   const maxBucket = Math.max(...Object.values(buckets), 1);
-  document.getElementById('score-dist').innerHTML = Object.entries(buckets).map(([label, count]) => `
-    <div class="dist-row">
-      <span class="dist-label">${label}</span>
-      <div class="dist-bar"><div class="dist-fill" style="width:${(count/maxBucket)*100}%">${count > 0 ? count : ''}</div></div>
-    </div>`).join('');
+  document.getElementById('score-dist').innerHTML = Object.entries(buckets).map(([label, count]) =>
+    `<div class="dist-row"><span class="dist-label">${label}</span><div class="dist-bar"><div class="dist-fill" style="width:${(count/maxBucket)*100}%">${count > 0 ? count : ''}</div></div></div>`
+  ).join('');
 
-  const numQuestions = rows[0].answers ? rows[0].answers.length : 0;
+  const hasAnswers = rows.some(r => r.answers && r.answers.length > 0);
+  if (!hasAnswers) {
+    document.getElementById('question-bars').innerHTML = '<p style="color:var(--text-dim);font-size:0.85rem;">Detailed per-question data will appear as participants complete the quiz.</p>';
+    document.getElementById('question-tbody').innerHTML = '';
+    return;
+  }
+
+  const numQuestions = Math.max(...rows.map(r => r.answers ? r.answers.length : 0));
   const questionStats = [];
-
   for (let i = 0; i < numQuestions; i++) {
     let correctCount = 0;
     const wrongAnswers = {};
     let questionText = '';
-
+    let counted = 0;
     rows.forEach(r => {
       if (r.answers && r.answers[i]) {
+        counted++;
         const a = r.answers[i];
         questionText = a.question || '';
-        if (a.is_correct) {
-          correctCount++;
-        } else if (a.chosen) {
-          wrongAnswers[a.chosen] = (wrongAnswers[a.chosen] || 0) + 1;
-        }
+        if (a.is_correct) correctCount++;
+        else if (a.chosen) wrongAnswers[a.chosen] = (wrongAnswers[a.chosen] || 0) + 1;
       }
     });
-
-    const pctCorrect = Math.round((correctCount / total) * 100);
+    const pctCorrect = counted > 0 ? Math.round((correctCount / counted) * 100) : 0;
     const topWrong = Object.entries(wrongAnswers).sort((a, b) => b[1] - a[1])[0];
-
-    questionStats.push({
-      num: i + 1,
-      question: questionText,
-      pctCorrect,
-      topWrong: topWrong ? `${topWrong[0]} (${topWrong[1]})` : '—'
-    });
+    questionStats.push({ num: i + 1, question: questionText, pctCorrect, topWrong: topWrong ? topWrong[0] + ' (' + topWrong[1] + ')' : '\u2014' });
   }
 
-  document.getElementById('question-bars').innerHTML = questionStats.map(q => `
-    <div class="bar-row">
-      <span class="bar-label">Q${q.num}</span>
-      <div class="bar-track">
-        <div class="bar-fill ${q.pctCorrect >= 50 ? 'green' : 'red'}" style="width:${q.pctCorrect}%">${q.pctCorrect}%</div>
-      </div>
-    </div>`).join('');
+  document.getElementById('question-bars').innerHTML = questionStats.map(q =>
+    `<div class="bar-row"><span class="bar-label">Q${q.num}</span><div class="bar-track"><div class="bar-fill ${q.pctCorrect >= 50 ? 'green' : 'red'}" style="width:${q.pctCorrect}%">${q.pctCorrect}%</div></div></div>`
+  ).join('');
 
-  document.getElementById('question-tbody').innerHTML = questionStats.map(q => `
-    <tr>
-      <td>${q.num}</td>
-      <td>${q.question}</td>
-      <td class="${q.pctCorrect >= 50 ? 'pct-correct' : 'pct-wrong'}">${q.pctCorrect}%</td>
-      <td>${q.topWrong}</td>
-    </tr>`).join('');
+  document.getElementById('question-tbody').innerHTML = questionStats.map(q =>
+    `<tr><td>${q.num}</td><td>${q.question}</td><td class="${q.pctCorrect >= 50 ? 'pct-correct' : 'pct-wrong'}">${q.pctCorrect}%</td><td>${q.topWrong}</td></tr>`
+  ).join('');
 }
 </script>
 </body>

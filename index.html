@@ -692,7 +692,10 @@ const quizData = [
   }
 ];
 
-const SCRIPT_URL = localStorage.getItem('quiz_script_url') || '';
+const FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSfJEfPHfarUrEsm9o39sfMlR--1JmFnEB_TWFPxkzPY9YnXMg/formResponse';
+const ENTRY_SCORE = 'entry.80037665';
+const ENTRY_PCT = 'entry.660729311';
+const ENTRY_ANSWERS = 'entry.1782492923';
 
 let currentQ = 0;
 let score = 0;
@@ -901,19 +904,15 @@ function prevQuestion() {
 }
 
 function submitResults(pct) {
-  if (!SCRIPT_URL) return;
-  const payload = {
-    timestamp: new Date().toISOString(),
-    score: score,
-    total: quizData.length,
-    percentage: pct,
-    answers: userAnswers
-  };
-  fetch(SCRIPT_URL, {
+  const formData = new URLSearchParams();
+  formData.append(ENTRY_SCORE, `${score}/${quizData.length}`);
+  formData.append(ENTRY_PCT, pct);
+  formData.append(ENTRY_ANSWERS, JSON.stringify(userAnswers));
+  fetch(FORM_URL, {
     method: 'POST',
     mode: 'no-cors',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: formData.toString()
   }).catch(() => {});
 }
 
