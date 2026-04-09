@@ -32,9 +32,9 @@ function setup() {
   sheet.setName(SHEET_NAME);
   sheet.appendRow([
     'Timestamp', 'Score', 'Total', 'Percentage',
-    'Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6',
-    'Q1_Chosen', 'Q2_Chosen', 'Q3_Chosen', 'Q4_Chosen', 'Q5_Chosen', 'Q6_Chosen',
-    'Q1_Text', 'Q2_Text', 'Q3_Text', 'Q4_Text', 'Q5_Text', 'Q6_Text'
+    'Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7',
+    'Q1_Chosen', 'Q2_Chosen', 'Q3_Chosen', 'Q4_Chosen', 'Q5_Chosen', 'Q6_Chosen', 'Q7_Chosen',
+    'Q1_Text', 'Q2_Text', 'Q3_Text', 'Q4_Text', 'Q5_Text', 'Q6_Text', 'Q7_Text'
   ]);
   sheet.getRange('1:1').setFontWeight('bold');
   const id = ss.getId();
@@ -58,13 +58,13 @@ function doPost(e) {
       data.total,
       data.percentage
     ];
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 7; i++) {
       row.push(answers[i] ? (answers[i].is_correct ? 'Correct' : 'Wrong') : '');
     }
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 7; i++) {
       row.push(answers[i] ? answers[i].chosen : '');
     }
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 7; i++) {
       row.push(answers[i] ? answers[i].question : '');
     }
     sheet.appendRow(row);
@@ -83,11 +83,11 @@ function doGet() {
   const rows = data.slice(1);
   const result = rows.map(row => {
     const answers = [];
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 7; i++) {
       answers.push({
-        question: row[16 + i] || ('Q' + (i + 1)),
+        question: row[18 + i] || ('Q' + (i + 1)),
         is_correct: row[4 + i] === 'Correct',
-        chosen: row[10 + i] || ''
+        chosen: row[11 + i] || ''
       });
     }
     return {
