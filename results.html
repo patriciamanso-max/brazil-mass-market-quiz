@@ -259,7 +259,7 @@
   <div class="question-table">
     <h3>Per-Question Breakdown</h3>
     <table>
-      <thead><tr><th>#</th><th>Question</th><th>% Correct</th><th>Most Chosen Wrong Answer</th></tr></thead>
+      <thead><tr><th>#</th><th>Question</th><th>% Correct</th><th>Correct Answer</th><th>Most Chosen Wrong Answer</th></tr></thead>
       <tbody id="question-tbody"></tbody>
     </table>
   </div>
@@ -443,18 +443,20 @@ function renderDashboard(rows) {
     const wrongAnswers = {};
     let questionText = '';
     let counted = 0;
+    let correctAnswer = '';
     rows.forEach(r => {
       if (r.answers && r.answers[i]) {
         counted++;
         const a = r.answers[i];
         questionText = a.question || '';
+        if (a.correct_answer) correctAnswer = a.correct_answer;
         if (a.is_correct) correctCount++;
         else if (a.chosen) wrongAnswers[a.chosen] = (wrongAnswers[a.chosen] || 0) + 1;
       }
     });
     const pctCorrect = counted > 0 ? Math.round((correctCount / counted) * 100) : 0;
     const topWrong = Object.entries(wrongAnswers).sort((a, b) => b[1] - a[1])[0];
-    questionStats.push({ num: i + 1, question: questionText, pctCorrect, topWrong: topWrong ? topWrong[0] + ' (' + topWrong[1] + ')' : '\u2014' });
+    questionStats.push({ num: i + 1, question: questionText, pctCorrect, correctAnswer: correctAnswer, topWrong: topWrong ? topWrong[0] + ' (' + topWrong[1] + ')' : '\u2014' });
   }
 
   document.getElementById('question-bars').innerHTML = questionStats.map(q =>
@@ -462,7 +464,7 @@ function renderDashboard(rows) {
   ).join('');
 
   document.getElementById('question-tbody').innerHTML = questionStats.map(q =>
-    `<tr><td>${q.num}</td><td>${q.question}</td><td class="${q.pctCorrect >= 50 ? 'pct-correct' : 'pct-wrong'}">${q.pctCorrect}%</td><td>${q.topWrong}</td></tr>`
+    `<tr><td>${q.num}</td><td>${q.question}</td><td class="${q.pctCorrect >= 50 ? 'pct-correct' : 'pct-wrong'}">${q.pctCorrect}%</td><td>${q.correctAnswer}</td><td>${q.topWrong}</td></tr>`
   ).join('');
 }
 </script>
