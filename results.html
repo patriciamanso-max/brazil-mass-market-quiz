@@ -222,7 +222,7 @@
 
 <div class="header">
   <h1>Live Quiz Results</h1>
-  <p>Brazilian Mass Market Quiz — Last 10 minutes</p>
+  <p>Brazilian Mass Market Quiz</p>
   <div class="live-badge" id="live-badge" style="display:none;">
     <span class="live-dot"></span>
     LIVE — auto-refreshing
@@ -358,14 +358,10 @@ function loadData() {
       dashboardEl.style.display = 'block';
 
       const rawRows = parseCSV(csv);
-      const now = new Date();
-      const cutoff = new Date(now.getTime() - WINDOW_MINUTES * 60 * 1000);
 
       const rows = rawRows.filter(r => {
-        const ts = r['Timestamp'] || r['timestamp'] || '';
-        if (!ts) return true;
-        const t = new Date(ts);
-        return t >= cutoff;
+        const score = r['Score'] || r['score'] || '';
+        return score.length > 0;
       }).map(r => {
         const pctRaw = r['Percentage'] || r['percentage'] || '0';
         const pct = parseInt(pctRaw) || 0;
