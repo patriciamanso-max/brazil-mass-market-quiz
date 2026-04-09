@@ -757,9 +757,9 @@ function renderQuestion() {
     list.appendChild(btn);
   });
 
-  document.getElementById('submit-multi-btn').classList.toggle('show', !!q.multi);
-  document.getElementById('submit-multi-btn').style.display = q.multi ? '' : 'none';
-  if (q.multi) document.getElementById('submit-multi-btn').className = 'btn submit-multi-btn';
+  const submitBtn = document.getElementById('submit-multi-btn');
+  submitBtn.className = q.multi ? 'btn submit-multi-btn show' : 'btn submit-multi-btn';
+  submitBtn.style.display = q.multi ? 'block' : 'none';
 
   document.getElementById('feedback-bar').className = 'feedback-bar';
   document.getElementById('next-btn').classList.remove('show');
