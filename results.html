@@ -246,16 +246,6 @@
     </div>
   </div>
   <div class="stats-row" id="stats-row"></div>
-  <div class="charts-row">
-    <div class="chart-card">
-      <h3>Score Distribution</h3>
-      <div class="score-distribution" id="score-dist"></div>
-    </div>
-    <div class="chart-card">
-      <h3>% Correct by Question</h3>
-      <div class="bar-chart" id="question-bars"></div>
-    </div>
-  </div>
   <div class="question-table">
     <h3>Per-Question Breakdown</h3>
     <table>
@@ -393,8 +383,6 @@ function loadData() {
 function renderDashboard(rows) {
   if (!rows || rows.length === 0) {
     document.getElementById('stats-row').innerHTML = '<div style="grid-column:1/-1;"><div class="empty-state"><div class="icon">&#9203;</div><h2>Waiting for participants...</h2><p>Results will appear here automatically as people complete the quiz.</p></div></div>';
-    document.getElementById('score-dist').innerHTML = '';
-    document.getElementById('question-bars').innerHTML = '';
     document.getElementById('question-tbody').innerHTML = '';
     return;
   }
@@ -415,23 +403,8 @@ function renderDashboard(rows) {
     <div class="stat-card"><div class="stat-value green">${perfect}</div><div class="stat-label">Perfect Scores</div></div>
     <div class="stat-card"><div class="stat-value" style="color:var(--accent)">${highest}%</div><div class="stat-label">Highest Score</div></div>`;
 
-  const buckets = { '0-16%': 0, '17-33%': 0, '34-50%': 0, '51-66%': 0, '67-83%': 0, '84-100%': 0 };
-  scores.forEach(s => {
-    if (s <= 16) buckets['0-16%']++;
-    else if (s <= 33) buckets['17-33%']++;
-    else if (s <= 50) buckets['34-50%']++;
-    else if (s <= 66) buckets['51-66%']++;
-    else if (s <= 83) buckets['67-83%']++;
-    else buckets['84-100%']++;
-  });
-  const maxBucket = Math.max(...Object.values(buckets), 1);
-  document.getElementById('score-dist').innerHTML = Object.entries(buckets).map(([label, count]) =>
-    `<div class="dist-row"><span class="dist-label">${label}</span><div class="dist-bar"><div class="dist-fill" style="width:${(count/maxBucket)*100}%">${count > 0 ? count : ''}</div></div></div>`
-  ).join('');
-
   const hasAnswers = rows.some(r => r.answers && r.answers.length > 0);
   if (!hasAnswers) {
-    document.getElementById('question-bars').innerHTML = '<p style="color:var(--text-dim);font-size:0.85rem;">Detailed per-question data will appear as participants complete the quiz.</p>';
     document.getElementById('question-tbody').innerHTML = '';
     return;
   }
@@ -458,10 +431,6 @@ function renderDashboard(rows) {
     const topWrong = Object.entries(wrongAnswers).sort((a, b) => b[1] - a[1])[0];
     questionStats.push({ num: i + 1, question: questionText, pctCorrect, correctAnswer: correctAnswer, topWrong: topWrong ? topWrong[0] + ' (' + topWrong[1] + ')' : '\u2014' });
   }
-
-  document.getElementById('question-bars').innerHTML = questionStats.map(q =>
-    `<div class="bar-row"><span class="bar-label">Q${q.num}</span><div class="bar-track"><div class="bar-fill ${q.pctCorrect >= 50 ? 'green' : 'red'}" style="width:${q.pctCorrect}%">${q.pctCorrect}%</div></div></div>`
-  ).join('');
 
   document.getElementById('question-tbody').innerHTML = questionStats.map(q =>
     `<tr><td>${q.num}</td><td>${q.question}</td><td class="${q.pctCorrect >= 50 ? 'pct-correct' : 'pct-wrong'}">${q.pctCorrect}%</td><td>${q.correctAnswer}</td><td>${q.topWrong}</td></tr>`
