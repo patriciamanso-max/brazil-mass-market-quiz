@@ -146,13 +146,17 @@
   .quiz-container {
     width: 100%;
     max-width: 780px;
+    max-height: 100%;
+    display: flex;
+    flex-direction: column;
   }
 
   .progress-bar-wrap {
     display: flex;
     align-items: center;
     gap: 1rem;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
+    flex-shrink: 0;
   }
   .progress-track {
     flex: 1;
@@ -178,8 +182,11 @@
     background: var(--card);
     border: 1px solid var(--card-border);
     border-radius: 20px;
-    padding: 2.5rem;
+    padding: 2rem;
     animation: slideUp 0.4s ease;
+    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
   }
 
   .question-number {
@@ -188,42 +195,42 @@
     text-transform: uppercase;
     letter-spacing: 2px;
     color: var(--accent);
-    margin-bottom: 1rem;
-  }
-
-  .question-text {
-    font-size: clamp(1.1rem, 2.5vw, 1.35rem);
-    font-weight: 600;
-    line-height: 1.5;
     margin-bottom: 0.5rem;
   }
 
+  .question-text {
+    font-size: clamp(1.05rem, 2.5vw, 1.3rem);
+    font-weight: 600;
+    line-height: 1.4;
+    margin-bottom: 0.4rem;
+  }
+
   .question-hint {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: var(--text-dim);
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
     font-style: italic;
   }
 
   .options {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.5rem;
   }
   .options.grid-layout {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 0.6rem;
+    gap: 0.5rem;
   }
 
   .option {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.75rem;
     background: rgba(255,255,255,0.03);
     border: 1.5px solid var(--card-border);
-    border-radius: 14px;
-    padding: 1rem 1.25rem;
+    border-radius: 12px;
+    padding: 0.7rem 1rem;
     cursor: pointer;
     transition: all 0.25s ease;
     font-family: inherit;
@@ -260,7 +267,7 @@
     color: #fff;
   }
   .submit-multi-btn {
-    margin-top: 1rem;
+    margin-top: 0.75rem;
     display: none;
   }
   .submit-multi-btn.show { display: block; }
@@ -270,9 +277,9 @@
   .option.disabled.reveal-correct { opacity: 1; }
 
   .option-letter {
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -296,9 +303,9 @@
     display: none;
     align-items: center;
     justify-content: space-between;
-    margin-top: 1.5rem;
-    padding: 1rem 1.5rem;
-    border-radius: 14px;
+    margin-top: 0.75rem;
+    padding: 0.6rem 1rem;
+    border-radius: 12px;
     animation: slideUp 0.3s ease;
   }
   .feedback-bar.show { display: flex; }
@@ -314,7 +321,7 @@
   .feedback-text { font-weight: 600; font-size: 1rem; flex: 1; }
 
   .next-btn {
-    margin-top: 1.5rem;
+    margin-top: 0.75rem;
     display: none;
     margin-left: auto;
   }
